@@ -1,28 +1,30 @@
-@import "../../../theme/variables.less";
+@import '../../../theme/variables.less';
 .MenuTop {
   &__list {
-    display:flex;
-    justify-content:flex-start;
-    list-style:none;
+    display: flex;
+    justify-content: flex-start;
+    list-style: none;
   }
 
   &__item {
-    position:relative;
+    position: relative;
 
     &:not(:last-of-type) {
-      margin-right:22px;
+      margin-right: 22px;
     }
 
     &_active {
       & a {
-        font-weight:700;
+        font-weight: bold;
+        color: @yellow;
       }
     }
   }
 
   &__link {
-    font-size:14px;
-    font-weight:300;
-    color: @blue;
+    font-size: 16px;
+    font-weight: normal;
+    color: @gray;
+    text-decoration: none;
   }
 }

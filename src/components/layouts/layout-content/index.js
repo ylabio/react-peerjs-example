@@ -1,24 +1,23 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import cn from 'classnames';
-import themes from '@utils/themes';
+import { Layout } from 'antd';
 
-import './style.less';
+const { Content } = Layout;
+const style = {
+  background: '#fafafa',
+  padding: '30px 50px',
+  height: 'calc(100vh - 132px)',
+};
 
 class LayoutContent extends Component {
   static propTypes = {
     children: PropTypes.node,
-    theme: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
-  };
-
-  static defaultProps = {
-    theme: ['default'],
   };
 
   render() {
-    const { children, theme } = this.props;
+    const { children } = this.props;
 
-    return <div className={cn(`LayoutContent`, themes('LayoutContent', theme))}>{children}</div>;
+    return <Content style={style}>{children}</Content>;
   }
 }
 

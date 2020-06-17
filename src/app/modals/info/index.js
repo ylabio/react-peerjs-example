@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback } from 'react';
 import modal from '@store/modal/actions';
-import Button from '@components/elements/button';
+import { Button } from 'antd';
 import LayoutModal from '@components/layouts/layout-modal';
 
 function Info(props) {

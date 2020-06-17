@@ -3,11 +3,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { withRouter } from 'react-router-dom';
-import session from '@store/session/actions';
 import detectActive from '@utils/detect-active';
-import LayoutHeader from '@components/layouts/layout-header';
-import MenuTop from '@components/menus/menu-top';
-import Button from '@components/elements/button';
+
+import { Layout, Menu } from 'antd';
+const { Header } = Layout;
 import Logo from '@components/elements/logo';
 
 class HeaderContainer extends Component {
@@ -15,7 +14,6 @@ class HeaderContainer extends Component {
     dispatch: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
-    session: PropTypes.object.isRequired,
   };
 
   constructor(props) {
@@ -24,10 +22,8 @@ class HeaderContainer extends Component {
     this.state = {
       items: detectActive(
         [
-          { title: 'Main', to: '/', active: false },
+          { title: 'Home', to: '/', active: false },
           { title: 'About', to: '/about', active: false },
-          { title: 'Catalog', to: '/catalog', active: false },
-          { title: 'Admin', to: '/private', active: false },
         ],
         props.location,
       ),
@@ -45,46 +41,31 @@ class HeaderContainer extends Component {
     }
   }
 
-  onClickLogin = () => {
-    this.props.history.push('/login');
-  };
-
-  onClickLogout = () => {
-    session.clear();
-  };
-
-  renderRight() {
-    const { session } = this.props;
-    const items = [];
-
-    if (session.exists) {
-      items.push(
-        <Button key={1} theme={['clear-white', 'margins']} onClick={this.onClickLogout}>
-          Logout
-        </Button>,
-      );
-    } else {
-      items.push(
-        <Button key={1} theme={['clear-white', 'margins']} onClick={this.onClickLogin}>
-          Login
-        </Button>,
-      );
-    }
-    return items;
-  }
-
   render() {
+    const { history, location } = this.props;
     const { items } = this.state;
 
     return (
-      <LayoutHeader left={<Logo />} right={this.renderRight()} center={<MenuTop items={items} />} />
+      <Header>
+        <Logo />
+        <Menu
+          theme="dark"
+          mode="horizontal"
+          selectedKeys={[location.pathname]}
+          defaultSelectedKeys={['/']}
+        >
+          {items.map(item => (
+            <Menu.Item key={item.to} onClick={() => history.push(item.to)}>
+              {item.title}
+            </Menu.Item>
+          ))}
+        </Menu>
+      </Header>
     );
   }
 }
 
 export default compose(
   withRouter,
-  connect(state => ({
-    session: state.session,
-  })),
+  connect(state => ({})),
 )(HeaderContainer);
