@@ -5,20 +5,20 @@ import modal from '@store/modal/actions';
 
 const layout = {
   labelCol: {
-    span: 0,
+    span: 6,
   },
   wrapperCol: {
-    span: 34,
+    span: 18,
   },
 };
 const tailLayout = {
   wrapperCol: {
-    offset: 8,
-    span: 16,
+    offset: 6,
+    span: 18,
   },
 };
 
-function Conference() {
+function PeerJsConnect() {
   const select = useSelectorMap(state => ({
     items: state.articles.items,
     wait: state.articles.wait,
@@ -43,8 +43,8 @@ function Conference() {
 
   return (
     <Form
+      {...layout}
       name="basic"
-      layout="inline"
       initialValues={{
         remember: true,
       }}
@@ -52,23 +52,25 @@ function Conference() {
       onFinishFailed={onFinishFailed}
     >
       <Form.Item
-        name="message"
+        label="Peer ID"
+        name="peerId"
         rules={[
           {
-            required: false,
-            message: 'Please input your message!',
+            required: true,
+            message: 'Please invent and input your ID!',
           },
         ]}
       >
-        <Input placeholder="Chat message..." style={{ width: 350 }} />
+        <Input />
       </Form.Item>
-      <Form.Item>
+
+      <Form.Item {...tailLayout}>
         <Button type="primary" htmlType="submit">
-          Send
+          Connect
         </Button>
       </Form.Item>
     </Form>
   );
 }
 
-export default React.memo(Conference);
+export default React.memo(PeerJsConnect);
