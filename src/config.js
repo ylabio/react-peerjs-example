@@ -28,6 +28,12 @@ let config = {
     port: 8130,
     preloadState: true,
   },
+
+  peerJsServer: {
+    host: '0.peerjs.com',
+    port: 443,
+    path: '/',
+  },
 };
 
 module.exports = config;

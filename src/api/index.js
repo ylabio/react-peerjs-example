@@ -30,9 +30,6 @@ export default http;
 /**
  * Reexport API modules
  */
-import Common from '@api/common';
-import Users from '@api/users';
+// import Common from '@api/common';
 
-export const users = new Users(http);
-export const articles = new Common(http, 'articles');
-export const categories = new Common(http, 'categories');
+// export const articles = new Common(http, 'articles');
