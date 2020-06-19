@@ -6,24 +6,29 @@ export const types = {
 };
 
 export const initState = {
-  peers: [], // [{id: 'qq5z3h7k6l111000', name: 'Peter', conn: {...} || null, call: {...} || null}]
-  messages: [], // [{peer: {id, name}, data: '...'}]
+  peers: [], // [{id: 'qq5z3h7k6l111000', nickname: 'Peter', conn: {...} || null, call: {...} || null}]
+  messages: [], // [{peer: {id, nickname}, data: '...'}]
   peerId: null,
-  name: '',
+  nickname: '',
   connected: false,
   wait: false,
   errors: null,
 };
 
 const actions = {
-  connect: async (name, peers) => {
+  connect: async ({ nickname, peerId = null, peerIds = [] }) => {
     store.dispatch({ type: types.SET, payload: { wait: true, errors: null } });
     try {
-      const peers = peers.map(peerId => ({ id: peerId, name: '', conn: null, call: null }));
-      peerJs.connect(null, peerId => {
+      const peers = peerIds.map(peerId => ({
+        id: peerId,
+        nickname: 'Unknown',
+        conn: null,
+        call: null,
+      }));
+      peerJs.connect(peerId || null, peerId => {
         store.dispatch({
           type: types.SET,
-          payload: { wait: false, connected: true, peerId, name, peers },
+          payload: { wait: false, connected: true, peerId, nickname, peers },
         });
         actions.connectDataWithAll();
         actions.connectMediaWithAll();
@@ -108,7 +113,7 @@ const actions = {
     for (let i = 0; i < conference.peers.length; i++) {
       const peer = conference.peers[i];
       if (!peer.conn || !peer.conn.open) {
-        peerJs.dataConnect(peer.id, conference.name);
+        peerJs.dataConnect(peer.id, conference.nickname);
       }
     }
   },
@@ -125,8 +130,8 @@ const actions = {
         return item;
       });
     } else {
-      const name = conn.metadata ? conn.metadata.name : 'Unknown';
-      peers = [...conference.peers, { id: conn.peer, name, conn }];
+      const nickname = conn.metadata ? conn.metadata.nickname : 'Unknown';
+      peers = [...conference.peers, { id: conn.peer, nickname, conn }];
     }
     store.dispatch({ type: types.SET, payload: { peers } });
   },
@@ -140,7 +145,7 @@ const actions = {
     const messages = [
       ...conference.messages,
       {
-        peer: { id: peer.id, name: peer.name },
+        peer: { id: peer.id, nickname: peer.nickname },
         data,
       },
     ];
@@ -150,7 +155,7 @@ const actions = {
   sendDataToAll: async data => {
     try {
       const { conference } = store.getState();
-      const peer = { id: conference.peerId, name: conference.name };
+      const peer = { id: conference.peerId, nickname: conference.nickname };
       const messages = [...conference.messages, { peer, data }];
       store.dispatch({ type: types.SET, payload: { messages } });
 
@@ -172,7 +177,7 @@ const actions = {
     for (let i = 0; i < conference.peers.length; i++) {
       const peer = conference.peers[i];
       if (!peer.call || !peer.call.open) {
-        peerJs.mediaCall(peer.id, conference.name);
+        peerJs.mediaCall(peer.id, conference.nickname);
       }
     }
   },
@@ -189,8 +194,8 @@ const actions = {
         return item;
       });
     } else {
-      const name = call.metadata ? call.metadata.name : 'Unknown';
-      peers = [...state.peers, { id: call.peer, name, call }];
+      const nickname = call.metadata ? call.metadata.nickname : 'Unknown';
+      peers = [...state.peers, { id: call.peer, nickname, call }];
     }
     store.dispatch({ type: types.SET, payload: { peers } });
   },

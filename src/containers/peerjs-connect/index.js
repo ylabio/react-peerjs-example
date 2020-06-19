@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
-import useSelectorMap from '@utils/hooks/use-selector-map';
 import { Form, Input, Button, Checkbox } from 'antd';
-import modal from '@store/modal/actions';
+import useSelectorMap from '@utils/hooks/use-selector-map';
+import conference from '@store/conference/actions';
 
 const layout = {
   labelCol: {
@@ -20,37 +20,45 @@ const tailLayout = {
 
 function PeerJsConnect() {
   const select = useSelectorMap(state => ({
-    items: state.articles.items,
-    wait: state.articles.wait,
+    peers: state.conference.peers,
+    peerId: state.conference.peerId,
+    nickname: state.conference.nickname,
+    connected: state.conference.connected,
+    wait: state.conference.wait,
+    errors: state.conference.errors,
   }));
 
   const callbacks = {
-    showInfo: useCallback(async () => {
-      const result = await modal.open('info', {
-        overflowTransparent: false,
-        overflowClose: true,
-      });
+    connect: useCallback(async ({ nickname, peerId }) => {
+      await conference.connect({ nickname, peerId });
     }, []),
   };
 
   const onFinish = values => {
-    console.log('Success:', values);
+    callbacks.connect(values);
   };
 
   const onFinishFailed = errorInfo => {
     console.log('Failed:', errorInfo);
   };
 
+  console.log('select', select);
+
   return (
-    <Form
-      {...layout}
-      name="basic"
-      initialValues={{
-        remember: true,
-      }}
-      onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
-    >
+    <Form {...layout} name="basic" onFinish={onFinish} onFinishFailed={onFinishFailed}>
+      <Form.Item
+        label="Nickname"
+        name="nickname"
+        rules={[
+          {
+            required: true,
+            message: 'Please input your nickname!',
+          },
+        ]}
+      >
+        <Input placeholder="Peter" disabled={select.connected} />
+      </Form.Item>
+
       <Form.Item
         label="Peer ID"
         name="peerId"
@@ -61,12 +69,17 @@ function PeerJsConnect() {
           },
         ]}
       >
-        <Input />
+        <Input placeholder="peter_falk" disabled={select.connected} />
       </Form.Item>
 
       <Form.Item {...tailLayout}>
-        <Button type="primary" htmlType="submit">
-          Connect
+        <Button
+          type="primary"
+          htmlType="submit"
+          loading={select.wait}
+          disabled={select.wait || select.connected}
+        >
+          {select.connected ? 'Connected' : 'Connect'}
         </Button>
       </Form.Item>
     </Form>

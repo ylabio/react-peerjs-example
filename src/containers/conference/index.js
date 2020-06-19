@@ -20,8 +20,11 @@ const tailLayout = {
 
 function Conference() {
   const select = useSelectorMap(state => ({
-    items: state.articles.items,
-    wait: state.articles.wait,
+    peers: state.conference.peers,
+    messages: state.conference.messages,
+    connected: state.conference.connected,
+    wait: state.conference.wait,
+    errors: state.conference.errors,
   }));
 
   const callbacks = {

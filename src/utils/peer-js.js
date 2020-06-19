@@ -108,17 +108,17 @@ class PeerJs {
   }
 
   // Соединение с участником по типу data
-  dataConnect(peerId, name) {
+  dataConnect(peerId, nickname) {
     if (!this.isConnected()) {
       return;
     }
 
-    const conn = this.peer.connect(peerId, { metadata: { id: peerId, name } });
+    const conn = this.peer.connect(peerId, { metadata: { id: peerId, nickname } });
     conn.on('open', () => this._onDataConnected(conn));
   }
 
   // Соединение с участником по типу media
-  mediaCall(peerId, name) {
+  mediaCall(peerId, nickname) {
     if (!this.isConnected()) {
       return;
     }
@@ -126,7 +126,7 @@ class PeerJs {
     this.userMedia(
       this.mediaConfig,
       stream => {
-        const call = this.peer.call(peerId, stream, { metadata: { id: peerId, name } });
+        const call = this.peer.call(peerId, stream, { metadata: { id: peerId, nickname } });
         this._onMediaConnected(call);
       },
       err => {
