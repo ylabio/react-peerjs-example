@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, Alert } from 'antd';
 import useSelectorMap from '@utils/hooks/use-selector-map';
 import conference from '@store/conference/actions';
 
@@ -84,6 +84,10 @@ function PeerJsConnect() {
       >
         <Input placeholder="peter_falk" disabled={select.connected} />
       </Form.Item>
+
+      {!!select.errors && (
+        <Alert message={select.errors.toString()} type="error" style={{ margin: '10px 0px' }} />
+      )}
 
       <Form.Item {...tailLayout}>
         <Button type="primary" htmlType="submit" loading={select.wait} disabled={select.wait}>

@@ -37,6 +37,7 @@ class PeerJs {
 
     // New connect
     // console.log('connecting...');
+    this.peerId = peerId;
     this.peer = new Peer(peerId, CONFIG.peerJsServer);
 
     // Событие при установке соединения с сервером PeerJs
@@ -136,6 +137,7 @@ class PeerJs {
 
   // Отправка сообщения другому участнику
   sendData(conn, data) {
+    console.log('sendData', conn.open, data);
     if (!conn || !conn.open || !data) {
       return;
     }
@@ -179,7 +181,7 @@ class PeerJs {
 
   // Вызов экшена при получении data сообщения
   _onDataRecv(peerId, data) {
-    // console.log('recv data:', peerId, data);
+    console.log('recv data:', peerId, data);
     actions.conference.dataRecv(peerId, data);
   }
 

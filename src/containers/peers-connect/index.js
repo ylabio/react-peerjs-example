@@ -21,12 +21,7 @@ const tailLayout = {
 
 function PeersConnect() {
   const select = useSelectorMap(state => ({
-    peers: state.conference.peers,
-    peerId: state.conference.peerId,
-    nickname: state.conference.nickname,
     connected: state.conference.connected,
-    wait: state.conference.wait,
-    errors: state.conference.errors,
   }));
 
   const callbacks = {
@@ -101,7 +96,7 @@ function PeersConnect() {
 
       <Form.Item {...tailLayout}>
         <Button type="primary" htmlType="submit" disabled={!select.connected}>
-          Connect
+          Connect Peers
         </Button>
       </Form.Item>
     </Form>
