@@ -2,8 +2,7 @@ import * as actions from '@store/actions';
 import CONFIG from '../config';
 
 class PeerJs {
-  configure(store) {
-    this.store = store;
+  configure() {
     this.peer = null;
     this.peerId = null;
     this.userMedia = null;
@@ -166,13 +165,13 @@ class PeerJs {
     if (clearPeer) {
       this.peer = null;
     }
-    this.store.dispatch(actions.conference.disconnected(err));
+    actions.conference.disconnected(err);
   }
 
   // Вызов экшена и подписка на события data соединении
   _onDataConnected(conn) {
     // console.log('data conn opened:', conn);
-    this.store.dispatch(actions.conference.dataConnected(conn));
+    actions.conference.dataConnected(conn);
     conn.on('data', data => this._onDataRecv(conn.peer, data));
     conn.on('close', () => this._onDataDisconnected(conn));
     conn.on('error', err => this._onDataDisconnected(conn, err));
@@ -181,7 +180,7 @@ class PeerJs {
   // Вызов экшена при получении data сообщения
   _onDataRecv(peerId, data) {
     // console.log('recv data:', peerId, data);
-    this.store.dispatch(actions.conference.dataRecv(peerId, data));
+    actions.conference.dataRecv(peerId, data);
   }
 
   // Когда участник отсоединяется от data соединения
@@ -189,13 +188,13 @@ class PeerJs {
   // err !== null - пытаемся сделать реконнект с участником, если инциатор - мы
   _onDataDisconnected(conn, err = null) {
     // console.log('data disconnected', conn.peer, conn.metadata, err);
-    this.store.dispatch(actions.conference.dataDisconnected(conn.peer, err));
+    actions.conference.dataDisconnected(conn.peer, err);
   }
 
   // Вызов экшена и подписка на события media соединении
   _onMediaConnected(call) {
     // console.log('media conn opened:', call);
-    this.store.dispatch(actions.conference.mediaConnected(call));
+    actions.conference.mediaConnected(call);
     call.on('stream', remoteStream => this._onStreamEvent(call.peer, remoteStream));
     call.on('close', () => this._onMediaDisconnected(call));
     call.on('error', err => this._onMediaDisconnected(call, err));
@@ -206,7 +205,7 @@ class PeerJs {
   // err !== null - пытаемся сделать реконнект с участником, если инциатор - мы
   _onMediaDisconnected(call, err = null) {
     // console.log('media disconnected', call.peer, call.metadata, err);
-    this.store.dispatch(actions.conference.mediaDisconnected(call.peer, err));
+    actions.conference.mediaDisconnected(call.peer, err);
     this.removeElementBy(call.peer);
   }
 

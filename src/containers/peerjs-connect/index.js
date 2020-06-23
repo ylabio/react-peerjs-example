@@ -32,9 +32,16 @@ function PeerJsConnect() {
     connect: useCallback(async ({ nickname, peerId }) => {
       await conference.connect({ nickname, peerId });
     }, []),
+    disconnect: useCallback(async () => {
+      await conference.disconnect();
+    }, []),
   };
 
   const onFinish = values => {
+    if (select.connected) {
+      callbacks.disconnect();
+      return;
+    }
     callbacks.connect(values);
   };
 
@@ -45,7 +52,13 @@ function PeerJsConnect() {
   console.log('select', select);
 
   return (
-    <Form {...layout} name="basic" onFinish={onFinish} onFinishFailed={onFinishFailed}>
+    <Form
+      {...layout}
+      name="basic"
+      initialValues={{ nickname: 'Peter', peerId: 'peter_falk' }}
+      onFinish={onFinish}
+      onFinishFailed={onFinishFailed}
+    >
       <Form.Item
         label="Nickname"
         name="nickname"
@@ -73,13 +86,8 @@ function PeerJsConnect() {
       </Form.Item>
 
       <Form.Item {...tailLayout}>
-        <Button
-          type="primary"
-          htmlType="submit"
-          loading={select.wait}
-          disabled={select.wait || select.connected}
-        >
-          {select.connected ? 'Connected' : 'Connect'}
+        <Button type="primary" htmlType="submit" loading={select.wait} disabled={select.wait}>
+          {select.connected ? 'Disconnect' : 'Connect'}
         </Button>
       </Form.Item>
     </Form>

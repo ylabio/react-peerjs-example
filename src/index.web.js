@@ -26,7 +26,7 @@ if (window['preloadedState']) {
 store.configure(preloadedState);
 api.configure(config.api);
 history.configure(config.routing);
-peerJs.configure(store);
+peerJs.configure();
 
 reactRender(
   <Provider store={store}>

@@ -19,7 +19,7 @@ import template from './index.html';
 store.configure();
 api.configure(config.api);
 history.configure({ ...config.routing, initialEntries: [workerData.url] }); // with request url
-peerJs.configure(store);
+peerJs.configure();
 
 const jsx = (
   <Provider store={store}>
