@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Form, Input, Button, Checkbox } from 'antd';
+import { Form, Input, Button } from 'antd';
 import useSelectorMap from '@utils/hooks/use-selector-map';
 import conference from '@store/conference/actions';
 
@@ -46,7 +46,7 @@ function PeerJsConnect() {
   };
 
   const onFinishFailed = errorInfo => {
-    console.log('Failed:', errorInfo);
+    console.error('Failed:', errorInfo);
   };
 
   console.log('select', select);

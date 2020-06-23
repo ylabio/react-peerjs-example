@@ -108,6 +108,13 @@ const actions = {
     store.dispatch({ type: types.SET, payload: { peers } });
   },
 
+  setPeers: async peerIds => {
+    const peers = peerIds.map(id => {
+      return { id };
+    });
+    store.dispatch({ type: types.SET, payload: { peers } });
+  },
+
   connectDataWithAll: async () => {
     const { conference } = store.getState();
     for (let i = 0; i < conference.peers.length; i++) {

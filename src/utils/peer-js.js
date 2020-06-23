@@ -69,7 +69,7 @@ class PeerJs {
       setTimeout(() => {
         // реконнектим со старым peerId
         this.connect(this.peerId, callback);
-      }, 1000);
+      }, 2000);
     });
 
     // Событие при входящем соединении типа data

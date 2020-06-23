@@ -5,6 +5,7 @@ import Content from '@components/layouts/layout-content';
 import Footer from '@components/layouts/layout-footer';
 import Conference from '@containers/conference';
 import PeerJsConnect from '@containers/peerjs-connect';
+import PeersConnect from '@containers/peers-connect';
 
 const { Sider } = Layout;
 
@@ -18,6 +19,7 @@ function Main() {
           style={{ background: '#ffffff', borderRight: '1px solid #eee', padding: '30px 15px' }}
         >
           <PeerJsConnect />
+          <PeersConnect />
         </Sider>
         <Layout>
           <Content>
