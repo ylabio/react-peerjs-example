@@ -14,7 +14,12 @@ function Conference() {
 
   const callbacks = {};
 
-  return <Chat />;
+  return (
+    <div>
+      <div id="peers_video"></div>
+      <Chat />
+    </div>
+  );
 }
 
 export default React.memo(Conference);

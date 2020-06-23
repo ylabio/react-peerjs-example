@@ -137,7 +137,6 @@ class PeerJs {
 
   // Отправка сообщения другому участнику
   sendData(conn, data) {
-    console.log('sendData', conn.open, data);
     if (!conn || !conn.open || !data) {
       return;
     }
@@ -181,7 +180,7 @@ class PeerJs {
 
   // Вызов экшена при получении data сообщения
   _onDataRecv(peerId, data) {
-    console.log('recv data:', peerId, data);
+    // console.log('recv data:', peerId, data);
     actions.conference.dataRecv(peerId, data);
   }
 
@@ -214,8 +213,15 @@ class PeerJs {
   // Создание аудио/видео элемента на странице и привязка к нему stream с участником
   // Все элементы мы помещаем в this.elements, чтобы при дисконнекте их уничтожить
   _onStreamEvent(peerId, remoteStream) {
+    console.log('_onStreamEvent', peerId, remoteStream);
+    const exist = this.elements.find(elm => elm.peerId === peerId);
+    if (exist) {
+      return;
+    }
+    const root = document.getElementById('peers_video');
     const tag = !this.mediaConfig.video ? 'audio' : 'video';
     const elm = document.createElement(tag);
+    root.append(elm);
     this.elements.push({ peerId, elm });
     elm.srcObject = remoteStream;
     elm.play();
