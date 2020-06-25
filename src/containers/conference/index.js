@@ -1,22 +1,12 @@
-import React, { useCallback } from 'react';
-import useSelectorMap from '@utils/hooks/use-selector-map';
-import { Form, Input, Button, Checkbox } from 'antd';
+import React from 'react';
 import Chat from '../chat';
 
+import './style.less';
+
 function Conference() {
-  const select = useSelectorMap(state => ({
-    peers: state.conference.peers,
-    messages: state.conference.messages,
-    connected: state.conference.connected,
-    wait: state.conference.wait,
-    errors: state.conference.errors,
-  }));
-
-  const callbacks = {};
-
   return (
-    <div>
-      <div id="peers_video"></div>
+    <div className="conference">
+      <div id="peers_video" className="conference__peers-video"></div>
       <Chat />
     </div>
   );

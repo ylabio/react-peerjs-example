@@ -82,6 +82,7 @@ class PeerJs {
         this.mediaConfig,
         stream => {
           call.answer(stream);
+          this._onMyStreamEvent(stream);
           this._onMediaConnected(call);
         },
         err => {
@@ -127,6 +128,7 @@ class PeerJs {
       this.mediaConfig,
       stream => {
         const call = this.peer.call(peerId, stream, { metadata: { id: peerId, nickname } });
+        this._onMyStreamEvent(stream);
         this._onMediaConnected(call);
       },
       err => {
@@ -213,7 +215,6 @@ class PeerJs {
   // Создание аудио/видео элемента на странице и привязка к нему stream с участником
   // Все элементы мы помещаем в this.elements, чтобы при дисконнекте их уничтожить
   _onStreamEvent(peerId, remoteStream) {
-    console.log('_onStreamEvent', peerId, remoteStream);
     const exist = this.elements.find(elm => elm.peerId === peerId);
     if (exist) {
       return;
@@ -221,9 +222,40 @@ class PeerJs {
     const root = document.getElementById('peers_video');
     const tag = !this.mediaConfig.video ? 'audio' : 'video';
     const elm = document.createElement(tag);
-    root.append(elm);
-    this.elements.push({ peerId, elm });
+    const elmRoot = document.createElement('div');
+    elmRoot.className = 'conference__video';
+    const elmLabel = document.createElement('div');
+    elmLabel.className = 'conference__label';
+    elmLabel.innerText = peerId;
+    elmRoot.append(elm);
+    elmRoot.append(elmLabel);
+    root.append(elmRoot);
+    this.elements.push({ peerId, elm: elmRoot });
     elm.srcObject = remoteStream;
+    elm.play();
+  }
+
+  // Вывод на экран своего видео-потока
+  _onMyStreamEvent(myStream) {
+    const peerId = this.peerId;
+    const exist = this.elements.find(elm => elm.peerId === peerId);
+    if (exist) {
+      return;
+    }
+    const root = document.getElementById('my_video');
+    const tag = !this.mediaConfig.video ? 'audio' : 'video';
+    const elm = document.createElement(tag);
+    const elmRoot = document.createElement('div');
+    elmRoot.className = 'my-video__video';
+    const elmLabel = document.createElement('div');
+    elmLabel.className = 'my-video__label';
+    elmLabel.innerText = 'My Video';
+    elmRoot.append(elm);
+    elmRoot.append(elmLabel);
+    root.append(elmRoot);
+    this.elements.push({ peerId, elm: elmRoot });
+    elm.srcObject = myStream;
+    elm.muted = true;
     elm.play();
   }
 }

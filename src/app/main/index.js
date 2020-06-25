@@ -6,6 +6,7 @@ import Footer from '@components/layouts/layout-footer';
 import Conference from '@containers/conference';
 import PeerJsConnect from '@containers/peerjs-connect';
 import PeersConnect from '@containers/peers-connect';
+import MyVideo from '@containers/my-video';
 
 const { Sider } = Layout;
 
@@ -20,6 +21,7 @@ function Main() {
         >
           <PeerJsConnect />
           <PeersConnect />
+          <MyVideo />
         </Sider>
         <Layout>
           <Content>

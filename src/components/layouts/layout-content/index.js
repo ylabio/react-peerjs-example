@@ -6,7 +6,8 @@ const { Content } = Layout;
 const style = {
   background: '#fafafa',
   padding: '30px 50px',
-  height: 'calc(100vh - 132px)',
+  // height: 'calc(100vh - 132px)',
+  overflow: 'hidden',
 };
 
 class LayoutContent extends Component {
