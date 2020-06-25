@@ -14,6 +14,7 @@ const appConfig = require('./src/config.js');
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const TerserJSPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -106,6 +107,7 @@ let config = {
           {
             loader: 'html-loader',
             options: {
+              attributes: false,
               /*minimize: isProduction*/
             },
           },
@@ -133,11 +135,19 @@ let config = {
 
 if (isWeb) {
   config.plugins.push(
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.join(__dirname, '/src/libs/peerjs.min.js'),
+          to: path.join(__dirname, '/dist/' + target),
+        },
+      ],
+    }),
     new HtmlWebPackPlugin({
       template: './index.html',
       filename: './index.html',
-      title: 'App',
-      base: appConfig.routing.basename,
+      // title: 'App',
+      // base: appConfig.routing.basename,
     }),
   );
 }

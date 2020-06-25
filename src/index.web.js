@@ -6,6 +6,7 @@ import { Base64 } from 'js-base64';
 import store from '@store';
 import api from '@api';
 import history from '@app/history';
+import peerJs from '@utils/peer-js';
 import App from '@app';
 import config from 'config.js';
 
@@ -25,6 +26,7 @@ if (window['preloadedState']) {
 store.configure(preloadedState);
 api.configure(config.api);
 history.configure(config.routing);
+peerJs.configure();
 
 reactRender(
   <Provider store={store}>

@@ -1,0 +1,31 @@
+.conference {
+  &__peers-video {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+    height: 310px;
+    overflow-y: scroll;
+  }
+
+  &__video {
+    position: relative;
+    margin: 0 10px 10px 0;
+    width: 400px;
+    height: 300px;
+  }
+
+  &__label {
+    position: absolute;
+    color: #fafafa;
+    font-size: 16px;
+    font-weight: bold;
+    right: 10px;
+    top: 10px;
+  }
+
+  video {
+    width: 400px;
+    height: 300px;
+  }
+}

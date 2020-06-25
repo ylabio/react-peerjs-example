@@ -10,6 +10,7 @@ import { ChunkExtractor } from '@loadable/server';
 import insertText from '@utils/insert-text';
 import store from '@store';
 import history from '@app/history';
+import peerJs from '@utils/peer-js';
 import api from '@api';
 import App from '@app';
 import config from 'config.js';
@@ -18,6 +19,7 @@ import template from './index.html';
 store.configure();
 api.configure(config.api);
 history.configure({ ...config.routing, initialEntries: [workerData.url] }); // with request url
+peerJs.configure();
 
 const jsx = (
   <Provider store={store}>
