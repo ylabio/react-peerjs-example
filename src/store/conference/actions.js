@@ -149,7 +149,6 @@ const actions = {
   },
 
   dataRecv: async (peerId, data) => {
-    console.log('dataRecv', peerId, data);
     const { conference } = store.getState();
     const peer = conference.peers.find(item => item.id === peerId);
     // Соединение не найдено

@@ -46,13 +46,11 @@ function PeerJsConnect() {
     console.error('Failed:', errorInfo);
   };
 
-  console.log('select', select);
-
   return (
     <Form
       {...layout}
       name="basic"
-      initialValues={{ nickname: 'Peter', peerId: 'peter_falk' }}
+      // initialValues={{ nickname: 'Peter', peerId: 'peter_falk' }}
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
     >
