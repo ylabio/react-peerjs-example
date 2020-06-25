@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Menu } from 'antd';
+import { Layout } from 'antd';
 import Header from '@containers/header-container';
 import Content from '@components/layouts/layout-content';
 import Footer from '@components/layouts/layout-footer';

@@ -20,9 +20,6 @@ const tailLayout = {
 
 function PeerJsConnect() {
   const select = useSelectorMap(state => ({
-    peers: state.conference.peers,
-    peerId: state.conference.peerId,
-    nickname: state.conference.nickname,
     connected: state.conference.connected,
     wait: state.conference.wait,
     errors: state.conference.errors,
