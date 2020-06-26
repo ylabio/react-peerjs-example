@@ -114,7 +114,7 @@ class PeerJs {
       return;
     }
 
-    const conn = this.peer.connect(peerId, { metadata: { id: peerId, nickname } });
+    const conn = this.peer.connect(peerId, { metadata: { id: this.peerId, nickname } });
     conn.on('open', () => this._onDataConnected(conn));
   }
 
@@ -127,7 +127,7 @@ class PeerJs {
     this.userMedia(
       this.mediaConfig,
       stream => {
-        const call = this.peer.call(peerId, stream, { metadata: { id: peerId, nickname } });
+        const call = this.peer.call(peerId, stream, { metadata: { id: this.peerId, nickname } });
         this._onMyStreamEvent(stream);
         this._onMediaConnected(call);
       },
