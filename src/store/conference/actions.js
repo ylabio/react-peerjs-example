@@ -1,6 +1,7 @@
 import moment from 'moment';
 import store from '@store';
 import peerJs from '@utils/peer-js';
+import { differenceBy } from 'lodash';
 
 export const types = {
   SET: Symbol('SET'),
@@ -110,9 +111,12 @@ const actions = {
   },
 
   setPeers: async peerIds => {
-    const peers = peerIds.map(id => {
+    const { conference } = store.getState();
+    const addPeers = peerIds.map(id => {
       return { id };
     });
+    const diffPeers = differenceBy(addPeers, conference.peers, item => item.id);
+    const peers = [...conference.peers, ...diffPeers];
     store.dispatch({ type: types.SET, payload: { peers } });
   },
 
@@ -130,6 +134,11 @@ const actions = {
     const { conference } = store.getState();
     let peers;
     let peer = conference.peers.find(item => item.id === conn.peer);
+    if (peer && peer.conn && peer.conn.open) {
+      conn.close();
+      return;
+    }
+
     if (peer) {
       peers = conference.peers.map(item => {
         if (item.id === conn.peer) {
@@ -213,6 +222,11 @@ const actions = {
     const { conference } = store.getState();
     let peers;
     let peer = conference.peers.find(item => item.id === call.peer);
+    if (peer && peer.call && peer.call.open) {
+      call.close();
+      return;
+    }
+
     if (peer) {
       peers = conference.peers.map(item => {
         if (item.id === call.peer) {
