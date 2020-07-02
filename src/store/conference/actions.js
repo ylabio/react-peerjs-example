@@ -8,7 +8,7 @@ export const types = {
 };
 
 export const initState = {
-  peers: [], // [{id: 'qq5z3h7k6l111000', nickname: 'Peter', conn: {...} || null, call: {...} || null}]
+  peers: [], // [{id: 'qq5z3h7k6l111000', nickname: 'Peter', conn: {...} || null, call: {...} || null, shareCall: {...} || null}]
   messages: [], // [{peer: {id, nickname}, createDate: '...', data: '...'}]
   peerId: null,
   nickname: '',
@@ -58,6 +58,10 @@ const actions = {
           peer.call.removeAllListeners();
           peer.call.close();
         }
+        if (peer.shareCall) {
+          peer.shareCall.removeAllListeners();
+          peer.shareCall.close();
+        }
       }
       peerJs.disconnect();
     } catch (e) {
@@ -104,6 +108,23 @@ const actions = {
     const peers = conference.peers.map(item => {
       if (item.id === peerId) {
         item.call = null;
+      }
+      return item;
+    });
+    store.dispatch({ type: types.SET, payload: { peers } });
+  },
+
+  displayMediaDisconnected: async peerId => {
+    const { conference } = store.getState();
+    const peer = conference.peers.find(item => item.id === peerId);
+    if (!peer || !peer.shareCall) {
+      return;
+    }
+
+    peer.shareCall.removeAllListeners();
+    const peers = conference.peers.map(item => {
+      if (item.id === peerId) {
+        item.shareCall = null;
       }
       return item;
     });
@@ -237,6 +258,39 @@ const actions = {
     } else {
       const nickname = call.metadata ? call.metadata.nickname : 'Unknown';
       peers = [...state.peers, { id: call.peer, nickname, call }];
+    }
+    store.dispatch({ type: types.SET, payload: { peers } });
+  },
+
+  shareScreenToAll: async () => {
+    const { conference } = store.getState();
+    for (let i = 0; i < conference.peers.length; i++) {
+      const peer = conference.peers[i];
+      if (!peer.shareCall || !peer.shareCall.open) {
+        peerJs.startShareScreen(peer.id, conference.nickname);
+      }
+    }
+  },
+
+  displayMediaConnected: async call => {
+    const { conference } = store.getState();
+    let peers;
+    let peer = conference.peers.find(item => item.id === call.peer);
+    if (peer && peer.shareCall && peer.shareCall.open) {
+      call.close();
+      return;
+    }
+
+    if (peer) {
+      peers = conference.peers.map(item => {
+        if (item.id === call.peer) {
+          return { ...item, shareCall: call };
+        }
+        return item;
+      });
+    } else {
+      const nickname = call.metadata ? call.metadata.nickname : 'Unknown';
+      peers = [...state.peers, { id: call.peer, nickname, shareCall: call }];
     }
     store.dispatch({ type: types.SET, payload: { peers } });
   },
