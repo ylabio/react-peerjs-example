@@ -6,11 +6,19 @@ class PeerJs {
     this.peer = null;
     this.peerId = null;
     this.userMedia = null;
-    this.elements = []; // [{peerId, elm}]
+    this.displayMedia = null;
+    this.elements = []; // [{peerId, elm, displayElm}]
     this.error = null;
     this.mediaConfig = {
       audio: true,
       video: true,
+    };
+    this.displayMediaConfig = {
+      video: true,
+      // video: {
+      //   cursor: 'always',
+      // },
+      // audio: false,
     };
   }
 
@@ -26,6 +34,17 @@ class PeerJs {
       // Запрашиваем доступ к микрофону и видео камере
       this.userMedia =
         navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+    }
+
+    // Если undefined - значит не удалось получить доступ к медиа ресурсам пользователя
+    if (!this.userMedia) {
+      alert('Failed to access user media resources!');
+      return;
+    }
+
+    if (!this.displayMedia) {
+      // Запрашиваем доступ к экрану монитора
+      this.displayMedia = navigator.mediaDevices.getDisplayMedia || navigator.getDisplayMedia;
     }
 
     if (!this.isDestroyed()) {
@@ -78,6 +97,12 @@ class PeerJs {
 
     // Событие при входящем соединении типа media
     this.peer.on('call', call => {
+      // Шаринг экрана
+      if (call.metadata && call.metadata.shareScreen) {
+        this._onDisplayMediaConnected(call);
+        return;
+      }
+      // Подключение по видео-связи
       this.userMedia(
         this.mediaConfig,
         stream => {
@@ -137,6 +162,51 @@ class PeerJs {
     );
   }
 
+  // Соединение с участником по типу media с расшариванием экрана вместо видео-потока с камеры
+  async startShareScreen(peerId, nickname) {
+    // if (!this.isConnected()) {
+    //   return;
+    // }
+
+    // this.displayMedia(this.displayMediaConfig)
+    //   .then(displayStream => {
+    //     const call = this.peer.call(peerId, displayStream, {
+    //       metadata: { id: this.peerId, nickname, shareScreen: true },
+    //     });
+    //     this._onDisplayMediaConnected(call);
+    //   })
+    //   .catch(err => {
+    //     console.error('Failed to get local screen capture', err);
+    //   });
+
+    try {
+      const root = document.getElementById('my_video');
+      const tag = 'video';
+      const elm = document.createElement(tag);
+      const elmRoot = document.createElement('div');
+      elmRoot.className = 'my-video__video';
+      const elmLabel = document.createElement('div');
+      elmLabel.className = 'my-video__label';
+      elmLabel.innerText = 'My Share Screen';
+      elmRoot.append(elm);
+      elmRoot.append(elmLabel);
+      root.append(elmRoot);
+      // this.elements.push({ peerId, elm: elmRoot });
+      elm.srcObject = await this.displayMedia(this.displayMediaConfig);
+      // elm.play();
+
+      // const displayStream = await this.displayMedia(this.displayMediaConfig);
+      // const call = this.peer.call(peerId, displayStream, {
+      //   metadata: { id: this.peerId, nickname, shareScreen: true },
+      // });
+      // this._onDisplayMediaConnected(call);
+    } catch (err) {
+      console.error('Failed to get local screen capture', err);
+    }
+  }
+
+  stopShareScreen() {}
+
   // Отправка сообщения другому участнику
   sendData(conn, data) {
     if (!conn || !conn.open || !data) {
@@ -160,6 +230,14 @@ class PeerJs {
     if (index !== -1) {
       this.elements[index].elm.remove();
       this.elements.splice(index, 1);
+    }
+  }
+
+  removeDisplayElementBy(peerId) {
+    const index = this.elements.findIndex(item => item.peerId === peerId);
+    if (index !== -1) {
+      this.elements[index].displayElm.remove();
+      this.elements[index].displayElm = null;
     }
   }
 
@@ -212,9 +290,23 @@ class PeerJs {
     this.removeElementBy(call.peer);
   }
 
+  _onDisplayMediaConnected(call) {
+    // console.log('media conn opened:', call);
+    actions.conference.displayMediaConnected(call);
+    call.on('stream', remoteStream => this._onStreamEvent(call.peer, remoteStream, true));
+    call.on('close', () => this._onDisplayMediaDisconnected(call));
+    call.on('error', err => this._onDisplayMediaDisconnected(call, err));
+  }
+
+  _onDisplayMediaDisconnected(call, err = null) {
+    // console.log('display media disconnected', call.peer, call.metadata, err);
+    actions.conference.displayMediaDisconnected(call.peer, err);
+    this.removeDisplayElementBy(call.peer);
+  }
+
   // Создание аудио/видео элемента на странице и привязка к нему stream с участником
   // Все элементы мы помещаем в this.elements, чтобы при дисконнекте их уничтожить
-  _onStreamEvent(peerId, remoteStream) {
+  _onStreamEvent(peerId, remoteStream, isDisplayMedia = false) {
     const exist = this.elements.find(elm => elm.peerId === peerId);
     if (exist) {
       return;
@@ -230,7 +322,14 @@ class PeerJs {
     elmRoot.append(elm);
     elmRoot.append(elmLabel);
     root.append(elmRoot);
-    this.elements.push({ peerId, elm: elmRoot });
+    if (isDisplayMedia) {
+      const index = this.elements.findIndex(item => item.peerId === peerId);
+      if (index !== -1) {
+        this.elements[index].displayElm = elmRoot;
+      }
+    } else {
+      this.elements.push({ peerId, elm: elmRoot });
+    }
     elm.srcObject = remoteStream;
     elm.play();
   }
