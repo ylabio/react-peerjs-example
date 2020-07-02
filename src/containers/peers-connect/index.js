@@ -28,7 +28,7 @@ function PeersConnect() {
     connectWithAll: useCallback(async ({ peerIds }) => {
       await conference.setPeers(peerIds);
       await conference.connectDataWithAll();
-      await conference.shareScreenToAll();
+      await conference.connectMediaWithAll();
     }, []),
   };
 

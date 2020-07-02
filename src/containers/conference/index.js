@@ -23,7 +23,7 @@ function Conference() {
       <div id="peers_video" className="conference__peers-video"></div>
       <Button
         type="primary"
-        disabled={!select.connected && select.peers.length === 0}
+        disabled={!select.connected || select.peers.length === 0}
         onClick={callbacks.shareScreenToAll}
       >
         Share screen

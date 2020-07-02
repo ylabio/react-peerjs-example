@@ -263,14 +263,13 @@ const actions = {
   },
 
   shareScreenToAll: async () => {
-    peerJs.startShareScreen('1', '1');
-    // const { conference } = store.getState();
-    // for (let i = 0; i < conference.peers.length; i++) {
-    //   const peer = conference.peers[i];
-    //   if (!peer.shareCall || !peer.shareCall.open) {
-    //     peerJs.startShareScreen(peer.id, conference.nickname);
-    //   }
-    // }
+    const { conference } = store.getState();
+    for (let i = 0; i < conference.peers.length; i++) {
+      const peer = conference.peers[i];
+      if (!peer.shareCall || !peer.shareCall.open) {
+        peerJs.startShareScreen(peer.id, conference.nickname);
+      }
+    }
   },
 
   displayMediaConnected: async call => {
